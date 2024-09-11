@@ -2,11 +2,11 @@ package brianpelinku.u5w2d3.authors;
 
 /*
  * ------user crud-------
- * 1. Get: /users --> findAll
- * 2. Get: /users/{userId} --> findById
- * 3. Post: /users
- * 4. Put: /users/{userId}
- * 5. Delete: /users/{userId}
+ * 1. Get: /authors --> findAll
+ * 2. Get: /authors/{userId} --> findById
+ * 3. Post: /authors
+ * 4. Put: /authors/{userId}
+ * 5. Delete: /authors/{userId}
  *
  * */
 
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/authors")
 public class AuthorController {
 
     @Autowired
@@ -27,13 +27,13 @@ public class AuthorController {
     // 1. Get: /users --> findAll
     @GetMapping
     public List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
+        return this.authorService.findAll();
     }
 
     // 2. Get: /users/{userId} --> findById
     @GetMapping("/{authorId}")
     public Author getAuthorById(@PathVariable int authorId) {
-        return authorService.getAuthor(authorId);
+        return authorService.findById(authorId);
     }
 
     // 3. Post: /users
@@ -46,14 +46,14 @@ public class AuthorController {
     // 4. Put: /users/{userId}
     @PutMapping("/{authorId}")
     public Author findAuthorByIdAndUpdate(@PathVariable int authorId, @RequestBody Author authorUpdate) {
-        return authorService.getAuthorByIdAndUpdate(authorId, authorUpdate);
+        return this.authorService.findByIdAndUpdate(authorId, authorUpdate);
     }
 
     // 5. Delete: /users/{userId}
     @DeleteMapping("/{authorId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findAuthorByIdAndDelete(@PathVariable int authorId) {
-        authorService.getByIdAndDelete(authorId);
+        authorService.findByIdAndDelete(authorId);
     }
 
 
