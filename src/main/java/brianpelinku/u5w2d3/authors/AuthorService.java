@@ -29,7 +29,7 @@ public class AuthorService {
     // 3. Post: /users
     public Author saveAuthor(Author bodyUser) {
         Random random = new Random();
-        bodyUser.setId(random.nextInt(1, 100));
+//        bodyUser.setId(random.nextInt(1, 100));
         bodyUser.setAvatar("https://ui-avatars.com/api/?name=" + bodyUser.getNome() + "+" + bodyUser.getCognome());
         this.authorsList.add(bodyUser);
         return bodyUser;

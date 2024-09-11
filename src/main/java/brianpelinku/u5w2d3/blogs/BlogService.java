@@ -24,7 +24,7 @@ public class BlogService {
     // 3. Post: /blogs
     public Blog saveBlog(Blog blog) {
         Random random = new Random();
-        blog.setId(random.nextInt(1, 100));
+//        blog.setId(random.nextInt(1, 100));
         blog.setCover("https://picsum.photos/200/300");
         this.blogsList.add(blog);
         return blog;

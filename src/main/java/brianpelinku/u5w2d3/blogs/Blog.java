@@ -1,5 +1,6 @@
 package brianpelinku.u5w2d3.blogs;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -7,7 +8,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Entity
+@Table(name = "blogs")
 public class Blog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private int id;
     private String categoria;
     private String titolo;
