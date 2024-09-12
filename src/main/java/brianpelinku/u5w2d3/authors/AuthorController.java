@@ -12,10 +12,9 @@ package brianpelinku.u5w2d3.authors;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
@@ -26,8 +25,10 @@ public class AuthorController {
 
     // 1. Get: /users --> findAll
     @GetMapping
-    public List<Author> getAllAuthors() {
-        return this.authorService.findAll();
+    public Page<Author> getAllAuthors(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "5") int size,
+                                      @RequestParam(defaultValue = "id") String sortBy) {
+        return this.authorService.findAll(page, size, sortBy);
     }
 
     // 2. Get: /users/{userId} --> findById

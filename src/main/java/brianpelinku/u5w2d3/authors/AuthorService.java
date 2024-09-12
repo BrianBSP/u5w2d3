@@ -3,9 +3,11 @@ package brianpelinku.u5w2d3.authors;
 import brianpelinku.u5w2d3.exceptions.BadRequestException;
 import brianpelinku.u5w2d3.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AuthorService {
@@ -27,8 +29,10 @@ public class AuthorService {
         return this.authorRepository.save(body);
     }
 
-    public List<Author> findAll() {
-        return this.authorRepository.findAll();
+    public Page<Author> findAll(int page, int size, String sortBy) {
+        if (page > 20) page = 20;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.authorRepository.findAll(pageable);
     }
 
     public Author findById(int authorId) {
@@ -41,6 +45,9 @@ public class AuthorService {
     }
 
     public Author findByIdAndUpdate(int authorId, Author updateAuthor) {
+        this.authorRepository.findByEmail(updateAuthor.getEmail()).ifPresent(author -> {
+            throw new BadRequestException("L'email " + updateAuthor.getEmail() + " è già in uso.");
+        });
         Author found = this.findById(authorId);
         found.setNome(updateAuthor.getNome());
         found.setCognome(updateAuthor.getCognome());
