@@ -1,5 +1,6 @@
 package brianpelinku.u5w2d3.blogs;
 
+import brianpelinku.u5w2d3.payloads.NewBlogPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,15 @@ public class BlogController {
     @Autowired
     private BlogService blogService;
 
+    // 3. Post: /blogs
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Blog saveBlog(@RequestBody NewBlogPayload blog) {
+        return blogService.saveBlog(blog);
+    }
+
     // 1. Get: /blogs --> findAll
-    @GetMapping
+    @GetMapping("")
     public List<Blog> getAllBlogs() {
         return blogService.getAllBlogs();
     }
@@ -35,16 +43,10 @@ public class BlogController {
         return blogService.getBlog(blogId);
     }
 
-    // 3. Post: /blogs
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Blog saveBlog(@RequestBody Blog blog) {
-        return blogService.saveBlog(blog);
-    }
 
     // 4. Put: /blogs/{blogId}
     @PutMapping("/{blogId}")
-    public Blog getBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody Blog blog) {
+    public Blog getBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody NewBlogPayload blog) {
         return blogService.getBlogByIdAndUpdate(blogId, blog);
     }
 

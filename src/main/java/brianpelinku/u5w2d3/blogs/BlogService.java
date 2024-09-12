@@ -1,61 +1,64 @@
 package brianpelinku.u5w2d3.blogs;
 
+import brianpelinku.u5w2d3.authors.Author;
+import brianpelinku.u5w2d3.authors.AuthorService;
 import brianpelinku.u5w2d3.exceptions.NotFoundException;
+import brianpelinku.u5w2d3.payloads.NewBlogPayload;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class BlogService {
-    private List<Blog> blogsList = new ArrayList<>();
+    @Autowired
+    private BlogRepository blogRepository;
+    @Autowired
+    private AuthorService authorService;
 
     // 1. Get: /blogs --> findAll
     public List<Blog> getAllBlogs() {
-        return this.blogsList;
+        return blogRepository.findAll();
     }
 
     // 2. Get: /blogs/{blogId} --> findById
     public Blog getBlog(int blogId) {
-        return this.blogsList.stream().filter(blog -> blog.getId() == blogId).findFirst().orElseThrow(() -> new NotFoundException(blogId));
+        return blogRepository.findById(blogId).orElseThrow(() -> new NotFoundException(blogId));
     }
 
     // 3. Post: /blogs
-    public Blog saveBlog(Blog blog) {
-        Random random = new Random();
-//        blog.setId(random.nextInt(1, 100));
-        blog.setCover("https://picsum.photos/200/300");
-        this.blogsList.add(blog);
-        return blog;
+    public Blog saveBlog(NewBlogPayload blogBody) {
+        Author author = authorService.findById(blogBody.getAuthorId());
+        Blog newBlog = new Blog();
+        newBlog.setTitolo(blogBody.getTitolo());
+        newBlog.setContenuto(blogBody.getContenuto());
+        newBlog.setCategoria(blogBody.getCategoria());
+        newBlog.setTempoDiLettura(blogBody.getTempoDiLettura());
+        newBlog.setAuthor(author);
+        newBlog.setCover("https://picsum.photos/200/300");
+
+        return this.blogRepository.save(newBlog);
     }
 
     // 4. Put: /blogs/{blogId}
-    public Blog getBlogByIdAndUpdate(int blogId, Blog bodyBlog) {
-        Blog found = null;
+    public Blog getBlogByIdAndUpdate(int blogId, NewBlogPayload bodyBlog) {
+        Blog found = this.getBlog(blogId);
 
-        for (Blog blog : this.blogsList) {
-            if (blog.getId() == blogId) {
-                found = blog;
-                found.setCategoria(bodyBlog.getCategoria());
-                found.setTitolo(bodyBlog.getTitolo());
-                found.setCover(bodyBlog.getCover());
-                found.setContenuto(bodyBlog.getContenuto());
-                found.setTempoDiLettura(bodyBlog.getTempoDiLettura());
-            }
+        found.setTitolo(bodyBlog.getTitolo());
+        found.setContenuto(bodyBlog.getContenuto());
+        found.setCategoria(bodyBlog.getCategoria());
+        found.setTempoDiLettura(bodyBlog.getTempoDiLettura());
+
+        if (found.getAuthor().getId() != bodyBlog.getAuthorId()) {
+            Author newAuthor = authorService.findById(bodyBlog.getAuthorId());
+            found.setAuthor(newAuthor);
         }
-        if (found == null) throw new NotFoundException(blogId);
-        return found;
+        return blogRepository.save(found);
     }
 
     // 5. Delete: /blogs/{blogId}
     public void getBlogByIdAndDelete(int blogId) {
-        Blog found = null;
-
-        for (Blog blog : this.blogsList) {
-            if (blog.getId() == blogId) found = blog;
-        }
-        if (found == null) throw new NotFoundException(blogId);
-        this.blogsList.remove(found);
+        Blog found = this.getBlog(blogId);
+        blogRepository.delete(found);
     }
 }

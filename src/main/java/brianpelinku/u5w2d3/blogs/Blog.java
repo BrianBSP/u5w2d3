@@ -1,5 +1,6 @@
 package brianpelinku.u5w2d3.blogs;
 
+import brianpelinku.u5w2d3.authors.Author;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,4 +21,8 @@ public class Blog {
     private String cover;
     private String contenuto;
     private int tempoDiLettura;
+
+    @ManyToOne
+    @JoinColumn(name = "authorId")
+    private Author author;
 }
